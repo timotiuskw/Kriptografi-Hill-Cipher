@@ -1,5 +1,9 @@
-import numpy as np  
-  
+import numpy as np
+import math
+
+option = 0
+kunci = ""
+
 # Kamus Huruf ke Angka
 substitusi = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'I': 8, 'J': 9,  
                'K': 10, 'L': 11, 'M': 12, 'N': 13, 'O': 14, 'P': 15, 'Q': 16, 'R': 17, 'S': 18,  
@@ -128,18 +132,35 @@ def decrypt(cipher_text, key_matrix):
     # Mengreplace karakter "_" dengan spasi " ".
     return plain_text.replace('_', ' ')
 
-option = 0
-key_matrix = np.array([[2, 3], [1, 4]])
+def buatkeymatrix(string_input) :
+    panjang_string = len(string_input)
+
+    # Menghitung ukuran matriks m x m
+    m = int(math.sqrt(panjang_string))
+
+    # Memastikan bahwa panjang string sesuai dengan ukuran matriks m x m
+    if m * m != panjang_string:
+        print("Panjang string tidak cocok dengan ukuran matriks m x m.")
+        exit()
+    else:
+        # Membuat matriks m x m dengan huruf dari string input
+        key_matrix = np.array([substitusi[text] for text in string_input]).reshape(m, m)
+        
+        return key_matrix
 
 while (option != "1" or option != "2" or option != "3") :
     option = input('\nHill Cipher\n1. Encrypt\n2. Decrypt\n3. Exit\nInput : ')
 
     if (option == "1") :
         plain_text = input('Insert Plain Text : ')
+        kunci = input('Insert Kunci : ').upper()
+        key_matrix = buatkeymatrix(kunci)
         cipher_text = encrypt(plain_text, key_matrix)
         print("\nCipher Text : ", cipher_text)
     elif (option == "2") :
         cipher_text = input('Insert Cipher Text : ')
+        kunci = input('Insert Kunci : ').upper()
+        key_matrix = buatkeymatrix(kunci)
         plain_text_decrypted = decrypt(cipher_text, key_matrix)
         print("\nPlain Text : ", plain_text_decrypted)
     elif (option == "3") :
