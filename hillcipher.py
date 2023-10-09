@@ -14,7 +14,7 @@ inverse_substitution = {angka: huruf for huruf, angka in substitusi.items()}
   
 def encrypt(plain_text, key_matrix):  
     # Convert Plain Text ke Huruf Besar
-    plain_text = plain_text.upper()  
+    plain_text = plain_text.upper()
     
     # Merubah karakter Spasi menjadi simbol "_"
     plain_text = plain_text.replace(" ", "_")
@@ -37,7 +37,9 @@ def encrypt(plain_text, key_matrix):
   
     # Tempat untuk menyimpan Cipher Text
     cipher_text = ''  
-  
+    
+    print(key_matrix)
+
     # Looping Enkripsi  
     for i in range(0, len(plain_text), len(key_matrix)):  
         # Mengambil plaintext huruf ke i sampai i + len(key_matrix)
@@ -48,9 +50,10 @@ def encrypt(plain_text, key_matrix):
         print("\nPlaintext : ", block_vector)
 
         # Perkalian Vector, kemudian di modulokan 27. 26 dari alphabet 1 untuk karakter spasi. 
-        encrypted_vector = np.dot(block_vector, key_matrix) % 27
+        # encrypted_vector = np.dot(block_vector, key_matrix) % 27
+        encrypted_vector = np.dot(key_matrix, block_vector) % 27
         print("Ciphertext : ", encrypted_vector)
-        
+
         # Konversi Angka ke Huruf 
         encrypted_block = ''.join([inverse_substitution[num] for num in encrypted_vector])
         print("Ciphertext : ", encrypted_block)
@@ -60,19 +63,19 @@ def encrypt(plain_text, key_matrix):
 
     return cipher_text
 
+# Fungsi untuk mencari modulo invers
+def mod_inverse(a, m):
+    for x in range(1, m):
+        if (a * x) % m == 1:
+            return x
+    return None
+
 def decrypt(cipher_text, key_matrix):
 
     cipher_text = cipher_text.upper()
 
     # Mencari determinan dengan menggunakan numpy, kemudian angkanya di bulatkan.
     determinant = int(np.round(np.linalg.det(key_matrix)))
-
-    # Fungsi untuk mencari modulo invers
-    def mod_inverse(a, m):
-        for x in range(1, m):
-            if (a * x) % m == 1:
-                return x
-        return None
 
     # Mencari modulo invers dari determinan
     modulo_inverse = mod_inverse(determinant, 27)
@@ -119,7 +122,8 @@ def decrypt(cipher_text, key_matrix):
         print("\nCiphertext : ", block_vector)
 
         # Dekripsi dengan mengalikan matriks kunci invers dengan vektor ciphertext
-        decrypted_vector = np.dot(block_vector, key_matrix_inv) % 27
+        # decrypted_vector = np.dot(block_vector, key_matrix_inv) % 27
+        decrypted_vector = np.dot(key_matrix_inv, block_vector) % 27
         print("Plaintext : ", decrypted_vector)
 
         # Konversi vektor hasil dekripsi menjadi huruf
@@ -141,7 +145,7 @@ def buatkeymatrix(string_input) :
     # Memastikan bahwa panjang string sesuai dengan ukuran matriks m x m
     if m * m != panjang_string:
         print("Panjang string tidak cocok dengan ukuran matriks m x m.")
-        exit()
+        return None
     else:
         # Membuat matriks m x m dengan huruf dari string input
         key_matrix = np.array([substitusi[text] for text in string_input]).reshape(m, m)
@@ -149,19 +153,37 @@ def buatkeymatrix(string_input) :
         return key_matrix
 
 while (option != "1" or option != "2" or option != "3") :
-    option = input('\nHill Cipher\n1. Encrypt\n2. Decrypt\n3. Exit\nInput : ')
+    option = input('\nHill Cipher\n1. Encrypt\n2. Decrypt\n3. Cek Kunci\n4. Exit\nInput : ')
 
     if (option == "1") :
         plain_text = input('Insert Plain Text : ')
         kunci = input('Insert Kunci : ').upper()
         key_matrix = buatkeymatrix(kunci)
+        if key_matrix is None :
+            break
         cipher_text = encrypt(plain_text, key_matrix)
         print("\nCipher Text : ", cipher_text)
     elif (option == "2") :
         cipher_text = input('Insert Cipher Text : ')
         kunci = input('Insert Kunci : ').upper()
         key_matrix = buatkeymatrix(kunci)
+        if key_matrix is None :
+            break
         plain_text_decrypted = decrypt(cipher_text, key_matrix)
         print("\nPlain Text : ", plain_text_decrypted)
     elif (option == "3") :
+        kunciditemukan = 0
+        while (kunciditemukan == 0) :
+            kunci = input('Insert Kunci : ').upper()
+            key_matrix = buatkeymatrix(kunci)
+            if key_matrix is None :
+                break
+            determinant = int(np.round(np.linalg.det(key_matrix)))
+            result = mod_inverse(determinant, 27)
+            if result is not None :
+                kunciditemukan = 1
+                print('Modulo Invers dari {kunci} adalah ', result)
+            else :
+                print('Kunci Tersebut Tidak Memiliki Modulo Invers.')
+    elif (option == "4") :
         exit()
