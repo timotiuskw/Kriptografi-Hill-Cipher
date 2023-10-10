@@ -3,6 +3,7 @@ import math
 
 option = 0
 kunci = ""
+characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_'
 
 # Kamus Huruf ke Angka
 substitusi = {'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'I': 8, 'J': 9,  
@@ -151,6 +152,45 @@ def buatkeymatrix(string_input) :
         key_matrix = np.array([substitusi[text] for text in string_input]).reshape(m, m)
         
         return key_matrix
+    
+# Fungsi untuk menghasilkan pola
+def generate_pattern(characters, length):
+    patterns = []
+    generate_recursive('', characters, length, patterns)
+    return patterns
+
+# Fungsi rekursif untuk menghasilkan pola
+def generate_recursive(prefix, characters, length, patterns):
+    if length == 0:
+        patterns.append(prefix)
+        return
+    for char in characters:
+        generate_recursive(prefix + char, characters, length - 1, patterns)
+    
+def cekrekomendasi(kunci) :
+    result = []
+    cek = 0
+
+    for i in range(len(kunci)) :
+        temp = generate_pattern(characters, i+1)
+        for huruf in temp :
+            text = kunci[0:len(kunci)-i-1] + huruf
+            print(text)
+            text_vector = np.array([substitusi[huruf] for huruf in text]).reshape(int(math.sqrt(len(text))),int(math.sqrt(len(text))))
+            determinant = int(np.round(np.linalg.det(text_vector)))
+            modulo_inverse = mod_inverse(determinant, 27)
+            print(modulo_inverse)
+            if modulo_inverse is not None :
+                result.append(text)
+                cek = 1
+            if cek == 1 :
+                break
+        if cek == 1 :
+            print(result)
+            break
+    return result
+
+
 
 while (option != "1" or option != "2" or option != "3") :
     option = input('\nHill Cipher\n1. Encrypt\n2. Decrypt\n3. Cek Kunci\n4. Exit\nInput : ')
@@ -184,6 +224,8 @@ while (option != "1" or option != "2" or option != "3") :
                 kunciditemukan = 1
                 print('Modulo Invers dari {kunci} adalah ', result)
             else :
+                rekomendasi = cekrekomendasi(kunci)
                 print('Kunci Tersebut Tidak Memiliki Modulo Invers.')
+                print('Rekomendasi : ', rekomendasi)
     elif (option == "4") :
         exit()
