@@ -202,6 +202,7 @@ while (option != "1" or option != "2" or option != "3") :
     if (option == "1") :
         plain_text = input('Insert Plain Text : ')
         kunci = input('Insert Kunci : ').upper()
+        kunci = kunci.replace(' ', '_')
         key_matrix = buatkeymatrix(kunci)
         if key_matrix is None :
             break
@@ -210,6 +211,7 @@ while (option != "1" or option != "2" or option != "3") :
     elif (option == "2") :
         cipher_text = input('Insert Cipher Text : ')
         kunci = input('Insert Kunci : ').upper()
+        kunci = kunci.replace(' ', '_')
         key_matrix = buatkeymatrix(kunci)
         if key_matrix is None :
             break
@@ -217,6 +219,7 @@ while (option != "1" or option != "2" or option != "3") :
         print("\nPlain Text : ", plain_text_decrypted)
     elif (option == "3") :
         kunci = input('Insert Kunci : ').upper()
+        kunci = kunci.replace(' ', '_')
         key_matrix = buatkeymatrix(kunci)
         if key_matrix is None :
             break
