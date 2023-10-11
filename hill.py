@@ -90,7 +90,7 @@ def decrypt(cipher_text, key_matrix):
     else:
         # Membuat variabel penampung baru, besarnya sama seperti key_matrix.
         # Jika key_matrix berukuran 3x3, maka adjoint_matrix akan berukuran 3x3 juga.
-        adjoint_matrix = np.zeros_like(key_matrix)
+        adjoint_matrix = np.zeros_like(key_matrix, dtype=np.int64)
 
         # key_matrix.shape isinya yaitu ukuran matriks.
         # Jika key_matrix berukuran 3x3, maka key_matrix.shape akan bernilai [3,3]
@@ -206,7 +206,6 @@ while (option != "1" or option != "2" or option != "3") :
         if key_matrix is None :
             break
         cipher_text = encrypt(plain_text, key_matrix)
-        print("\nCipher Text : ", cipher_text)
     elif (option == "2") :
         cipher_text = input('Insert Cipher Text : ')
         kunci = input('Insert Kunci : ').upper()
