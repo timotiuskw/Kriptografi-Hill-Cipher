@@ -206,6 +206,7 @@ while (option != "1" or option != "2" or option != "3") :
         if key_matrix is None :
             break
         cipher_text = encrypt(plain_text, key_matrix)
+        print("\nCipher Text : ", cipher_text)
     elif (option == "2") :
         cipher_text = input('Insert Cipher Text : ')
         kunci = input('Insert Kunci : ').upper()
