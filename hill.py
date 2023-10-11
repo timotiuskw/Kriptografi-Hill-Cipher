@@ -73,6 +73,7 @@ def mod_inverse(a, m):
 
 def decrypt(cipher_text, key_matrix):
 
+    # Convert Cipher Text ke Huruf Besar
     cipher_text = cipher_text.upper()
 
     # Mencari determinan dengan menggunakan numpy, kemudian angkanya di bulatkan.
@@ -138,6 +139,7 @@ def decrypt(cipher_text, key_matrix):
     return plain_text.replace('_', ' ')
 
 def buatkeymatrix(string_input) :
+    # Menghitung panjang string
     panjang_string = len(string_input)
 
     # Menghitung ukuran matriks m x m
@@ -152,53 +154,47 @@ def buatkeymatrix(string_input) :
         key_matrix = np.array([substitusi[text] for text in string_input]).reshape(m, m)
         
         return key_matrix
-    
-# # Fungsi untuk menghasilkan pola
-# def generate_pattern(characters, length):
-#     patterns = []
-#     generate_recursive('', characters, length, patterns)
-#     return patterns
-
-# # Fungsi rekursif untuk menghasilkan pola
-# def generate_recursive(prefix, characters, length, patterns):
-#     if len(patterns) >= 10000:
-#         return
-#     if length == 0:
-#         patterns.append(prefix)
-#         return
-#     for char in characters:
-#         generate_recursive(prefix + char, characters, length - 1, patterns)
 
 def generatekey(panjang):
     randomtext = []
+    # Mengulang berdasarkan panjang yang diinginkan
     for i in range(panjang) :
+        # Menghasilkan angka acak dari 0-26, kemudian disimpan kedalam array.
         randomtext.append(random.randint(0,26))
+    # Mengubah angka menjadi huruf sesuai substitusi.
     randomtext_array = np.array([inverse_substitution[text] for text in randomtext])
+    # Mengabungkan array menjadi satu string utuh.
     result = ''.join(randomtext_array)
 
     return result
     
 def cekrekomendasi(kunci) :
-    result = []
+    result = ""
     cek = 0
 
+    # Looping berdasarkan panjang kunci.
     for i in range(len(kunci)) :
+        # Looping mencoba kombinasi huruf sebanyak 10000 kali.
         for j in range(10000) :
+            # Menghasilkan huruf untuk mengreplace bagian belakang.
             huruf = generatekey(i+1)
+            # Menghapus string belakang yang kemudian di replace oleh huruf random.
             text = kunci[0:len(kunci)-i-1] + huruf
+            # Mengubah text menjadi matriks m x m
             text_vector = np.array([substitusi[huruf] for huruf in text]).reshape(int(math.sqrt(len(text))),int(math.sqrt(len(text))))
+            # Mencari Determinan
             determinant = int(np.round(np.linalg.det(text_vector)))
+            # Mencari Modulo Invers
             modulo_inverse = mod_inverse(determinant, 27)
+            # Jika Modulo Invers Ditemukan, return result. cek = 1 untuk keluar dari looping.
             if modulo_inverse is not None :
-                result.append(text)
+                result = text
                 cek = 1
             if cek == 1:
                 break
         if cek == 1 :
             break
     return result
-
-
 
 while (option != "1" or option != "2" or option != "3") :
     option = input('\nHill Cipher\n1. Encrypt\n2. Decrypt\n3. Cek Kunci\n4. Exit\nInput : ')
