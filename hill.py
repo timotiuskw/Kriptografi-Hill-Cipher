@@ -1,8 +1,8 @@
 import numpy as np
 import math
+import random
 
 option = 0
-kunci = ""
 characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_'
 
 # Kamus Huruf ke Angka
@@ -146,47 +146,55 @@ def buatkeymatrix(string_input) :
     # Memastikan bahwa panjang string sesuai dengan ukuran matriks m x m
     if m * m != panjang_string:
         print("Panjang string tidak cocok dengan ukuran matriks m x m.")
-        return None
+        return
     else:
         # Membuat matriks m x m dengan huruf dari string input
         key_matrix = np.array([substitusi[text] for text in string_input]).reshape(m, m)
         
         return key_matrix
     
-# Fungsi untuk menghasilkan pola
-def generate_pattern(characters, length):
-    patterns = []
-    generate_recursive('', characters, length, patterns)
-    return patterns
+# # Fungsi untuk menghasilkan pola
+# def generate_pattern(characters, length):
+#     patterns = []
+#     generate_recursive('', characters, length, patterns)
+#     return patterns
 
-# Fungsi rekursif untuk menghasilkan pola
-def generate_recursive(prefix, characters, length, patterns):
-    if length == 0:
-        patterns.append(prefix)
-        return
-    for char in characters:
-        generate_recursive(prefix + char, characters, length - 1, patterns)
+# # Fungsi rekursif untuk menghasilkan pola
+# def generate_recursive(prefix, characters, length, patterns):
+#     if len(patterns) >= 10000:
+#         return
+#     if length == 0:
+#         patterns.append(prefix)
+#         return
+#     for char in characters:
+#         generate_recursive(prefix + char, characters, length - 1, patterns)
+
+def generatekey(panjang):
+    randomtext = []
+    for i in range(panjang) :
+        randomtext.append(random.randint(0,26))
+    randomtext_array = np.array([inverse_substitution[text] for text in randomtext])
+    result = ''.join(randomtext_array)
+
+    return result
     
 def cekrekomendasi(kunci) :
     result = []
     cek = 0
 
     for i in range(len(kunci)) :
-        temp = generate_pattern(characters, i+1)
-        for huruf in temp :
+        for j in range(10000) :
+            huruf = generatekey(i+1)
             text = kunci[0:len(kunci)-i-1] + huruf
-            print(text)
             text_vector = np.array([substitusi[huruf] for huruf in text]).reshape(int(math.sqrt(len(text))),int(math.sqrt(len(text))))
             determinant = int(np.round(np.linalg.det(text_vector)))
             modulo_inverse = mod_inverse(determinant, 27)
-            print(modulo_inverse)
             if modulo_inverse is not None :
                 result.append(text)
                 cek = 1
-            if cek == 1 :
+            if cek == 1:
                 break
         if cek == 1 :
-            print(result)
             break
     return result
 
@@ -212,20 +220,18 @@ while (option != "1" or option != "2" or option != "3") :
         plain_text_decrypted = decrypt(cipher_text, key_matrix)
         print("\nPlain Text : ", plain_text_decrypted)
     elif (option == "3") :
-        kunciditemukan = 0
-        while (kunciditemukan == 0) :
-            kunci = input('Insert Kunci : ').upper()
-            key_matrix = buatkeymatrix(kunci)
-            if key_matrix is None :
-                break
-            determinant = int(np.round(np.linalg.det(key_matrix)))
-            result = mod_inverse(determinant, 27)
-            if result is not None :
-                kunciditemukan = 1
-                print('Modulo Invers dari {kunci} adalah ', result)
-            else :
-                rekomendasi = cekrekomendasi(kunci)
-                print('Kunci Tersebut Tidak Memiliki Modulo Invers.')
-                print('Rekomendasi : ', rekomendasi)
+        kunci = input('Insert Kunci : ').upper()
+        key_matrix = buatkeymatrix(kunci)
+        if key_matrix is None :
+            break
+        determinant = int(np.round(np.linalg.det(key_matrix)))
+        result = mod_inverse(determinant, 27)
+        if result is not None :
+            kunciditemukan = 1
+            print('Modulo Invers dari {kunci} adalah ', result)
+        else :
+            rekomendasi = cekrekomendasi(kunci)
+            print('Kunci Tersebut Tidak Memiliki Modulo Invers.')
+            print('Rekomendasi : ', rekomendasi)
     elif (option == "4") :
         exit()
