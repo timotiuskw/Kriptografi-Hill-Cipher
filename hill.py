@@ -39,7 +39,8 @@ def encrypt(plain_text, key_matrix):
     # Tempat untuk menyimpan Cipher Text
     cipher_text = ''  
     
-    print(key_matrix)
+    print('Plain Text Bersih : ', plain_text)
+    print('Key Matrix : \n', key_matrix)
 
     # Looping Enkripsi  
     for i in range(0, len(plain_text), len(key_matrix)):  
