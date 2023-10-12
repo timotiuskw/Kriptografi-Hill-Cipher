@@ -78,11 +78,14 @@ def decrypt(cipher_text, key_matrix):
 
     # Mencari determinan dengan menggunakan numpy, kemudian angkanya di bulatkan.
     determinant = int(np.round(np.linalg.det(key_matrix)))
+    print("\nDeterminan : ", determinant)
+
+    determinant = determinant % 27
+    print("K^-1 : ", determinant)
 
     # Mencari modulo invers dari determinan
     modulo_inverse = mod_inverse(determinant, 27)
 
-    print("\nDeterminan : ", determinant)
     print("Invers Modulo : ", modulo_inverse)
 
     if modulo_inverse is None:
